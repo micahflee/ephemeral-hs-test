@@ -35,7 +35,8 @@ def main():
 
     # Create an ephemeral hidden service
     try:
-        res = c.create_ephemeral_hidden_service(WEB_PORT)
+        print 'Creating hidden service'
+        res = c.create_ephemeral_hidden_service({ 80: WEB_PORT }, await_publication = True)
         onion = res.content()[0][2].split('=')[1] + '.onion'
         print onion
     except UnsatisfiableRequest:
@@ -51,6 +52,9 @@ def main():
             s.setproxy(socks.PROXY_TYPE_SOCKS5, '127.0.0.1', TOR_SOCKS5_PORT)
             s.connect((onion, 80))
             s.close()
+
+            print 'Connected successfully!'
+            ready = True
         except socks.ProxyConnectionError:
             print 'Cannot connect to Tor socks5 port'
             sys.exit()
